@@ -31,49 +31,7 @@ struct redircmd {
   int fd;            // the file descriptor number to use for the file
 };
 
-struct pipecmd {
-  int type;          // |
-  struct cmd *left;  // left side of pipe
-  struct cmd *right; // right side of pipe
-};
-
-int fork1(void);  // Fork but exits on failure.
-struct cmd *parsecmd(char*);
-
-// Execute cmd.  Never returns.
-void
-runcmd(struct cmd *cmd)
-{
-  int p[2], r, pid;
-  struct execcmd *ecmd;
-  struct pipecmd *pcmd;
-  struct redircmd *rcmd;
-
-  if(cmd == 0)
-    exit(0);
-
-  switch(cmd->type) {
-      default:
-          fprintf(stderr, "unknown runcmd\n");
-          exit(-1);
-
-      case ' ':
-          ecmd = (struct execcmd *) cmd;
-          if (ecmd->argv[0] == 0) {
-              exit(0);
-          }
-          if(execvp(ecmd->argv[0], ecmd->argv) < 0)
-          {
-              perror("Problem with input command");
-          }
-          break;
-
-      case '>':
-      case '<':
-          rcmd = (struct redircmd *) cmd;
-          int file_descriptor = open(rcmd->file, rcmd->mode, S_IRWXU);
-          if(file_descriptor < 0)
-          {
+struct pipecmd {          {
               perror("Problem with file descriptor");
               exit(0);
           }
